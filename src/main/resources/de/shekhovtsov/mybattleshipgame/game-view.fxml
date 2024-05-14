@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="de.shekhovtsov.mybattleshipgame.GameController">
+
+    <Label fx:id="topLabel" text="Battleship"/>
+
+    <Button fx:id="startButton" text="Start" onAction="#start"/>
+    <Button fx:id="randomButton" text="Random" onAction="#random"/>
+
+    <VBox fx:id="computerBox" alignment="CENTER" >
+
+    </VBox>
+
+    <VBox fx:id="userBox">
+
+    </VBox>
+
+</VBox>
