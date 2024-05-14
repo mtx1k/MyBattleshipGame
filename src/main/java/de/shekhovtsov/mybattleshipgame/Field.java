@@ -14,7 +14,10 @@ public class Field {
         return FIELD_SIZE;
     }
 
-    public SimpleCell[][] getShips() {
+    public SimpleCell[][] getField() {
+        if (field == null) {
+            fillFieldRandomly();
+        }
         return field;
     }
 
@@ -61,7 +64,7 @@ public class Field {
     }
 
     private void fillAroundShip(ArrayList<SimpleCell> shipCoordinates) {
-        ArrayList<SimpleCell> coordinatesAroundShip = getCoordinatesAroundShip(shipCoordinates, this.getShips());
+        ArrayList<SimpleCell> coordinatesAroundShip = getCoordinatesAroundShip(shipCoordinates, this.getField());
         for (SimpleCell ship : coordinatesAroundShip) {
             field[ship.getX()][ship.getY()].setId(0);
         }

@@ -19,9 +19,9 @@ public class FieldButtons {
     private ArrayList<SimpleCell> hittedShips = new ArrayList<>();
     private boolean isUser;
 
-    public FieldButtons(VBox vbox, SimpleCell[][] field, boolean isUser, Label label) {
+    public FieldButtons(VBox vbox, Field field, boolean isUser, Label label) {
         this.vbox = vbox;
-        this.field = field;
+        this.field = field.getField();
         this.isUser = isUser;
         this.topLabel = label;
         createField();
