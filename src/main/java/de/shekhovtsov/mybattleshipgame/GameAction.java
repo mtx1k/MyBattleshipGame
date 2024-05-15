@@ -101,7 +101,7 @@ public class GameAction implements EventHandler<ActionEvent> {
         }
         if (field[x][y].getId() > 0) {
             getButtonFromField(userField, x, y).setStyle("-fx-background-color: #826D8C");
-            hitShips.add(field[x][y]);
+            computerHits.add(field[x][y]);
             ArrayList<SimpleCell> hitShip = isDead(field[x][y]);
             if (hitShip != null) {
                 ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
@@ -160,11 +160,11 @@ public class GameAction implements EventHandler<ActionEvent> {
         VBox vBox = computerFieldButtons.getVbox();
         for (int i = 0; i < vBox.getChildren().size(); i++) {
             HBox hBox = (HBox) vBox.getChildren().get(i);
-            System.out.println(hBox.getClass());
+            //System.out.println(hBox.getClass());
             for (int j = 0; j < hBox.getChildren().size(); j++) {
                 Button button = (Button) hBox.getChildren().get(j);
                 button.setOnAction(this);
-                System.out.print(button.getProperties().get("x")+ "/" + button.getProperties().get("y") + " ");
+                //System.out.print(button.getProperties().get("x")+ "/" + button.getProperties().get("y") + " ");
             }
             System.out.println();
         }
