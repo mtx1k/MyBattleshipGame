@@ -11,7 +11,8 @@ import java.util.Random;
 
 public class GameAction implements EventHandler<ActionEvent> {
 
-    private final ArrayList<SimpleCell> hitShips = new ArrayList<>();
+    private final ArrayList<SimpleCell> hitUserShips = new ArrayList<>();
+    private final ArrayList<SimpleCell> hitCompShips = new ArrayList<>();
     private final ArrayList<SimpleCell> computerHits = new ArrayList<>();
     private final FieldButtons computerFieldButtons;
     private final FieldButtons userField;
@@ -36,8 +37,8 @@ public class GameAction implements EventHandler<ActionEvent> {
         if (field[x][y].getId() > 0) {
             button.setStyle("-fx-background-color: #826D8C");
 
-            hitShips.add(field[x][y]);
-            ArrayList<SimpleCell> hitShip = isDead(field[x][y]);
+            hitUserShips.add(field[x][y]);
+            ArrayList<SimpleCell> hitShip = isDead(field[x][y], hitUserShips);
             if (hitShip != null) {
                 ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 for (SimpleCell simpleCell : waterAroundDeadShip) {
@@ -70,8 +71,8 @@ public class GameAction implements EventHandler<ActionEvent> {
         }
         if (field[x][y].getId() > 0) {
             getButtonFromField(userField, x, y).setStyle("-fx-background-color: #826D8C");
-            computerHits.add(field[x][y]);
-            ArrayList<SimpleCell> hitShip = isDead(field[x][y]);
+            hitCompShips.add(field[x][y]);
+            ArrayList<SimpleCell> hitShip = isDead(field[x][y], hitCompShips);
             if (hitShip != null) {
                 ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 computerHits.addAll(waterAroundDeadShip);
@@ -86,7 +87,25 @@ public class GameAction implements EventHandler<ActionEvent> {
         return false;
     }
 
-    private ArrayList<SimpleCell> isDead(SimpleCell current) {
+    @Override
+    public void handle(ActionEvent event) {
+        if (userAction(event)) {
+            if (isEnd(hitUserShips)) {
+                computerFieldButtons.blockAllButtons();
+               // topLabel.setText("You WIN!!!!!!!!!!!");
+            }
+            return;
+        }
+        while (computerAction()) {
+            if (isEnd(hitCompShips)) {
+                computerFieldButtons.blockAllButtons();
+                break;
+               // topLabel.setText("You are LOOSER!!! HA-HA");
+            }
+        }
+    }
+
+    private ArrayList<SimpleCell> isDead(SimpleCell current, ArrayList<SimpleCell> hitShips) {
         ArrayList<SimpleCell> hitShip = new ArrayList<>();
         int length = current.getId() / 10;
         for (SimpleCell simpleCell : hitShips) {
@@ -109,22 +128,6 @@ public class GameAction implements EventHandler<ActionEvent> {
         return false;
     }
 
-    @Override
-    public void handle(ActionEvent event) {
-        if (userAction(event)) {
-            if (isEnd(hitShips)) {
-                computerFieldButtons.blockAllButtons();
-               // topLabel.setText("You WIN!!!!!!!!!!!");
-            }
-            return;
-        }
-        while (computerAction()) {
-            if (isEnd(computerHits)) {
-                computerFieldButtons.blockAllButtons();
-               // topLabel.setText("You are LOOSER!!! HA-HA");
-            }
-        }
-    }
     public void setButtonsHandler(FieldButtons fieldButtons) {
         VBox vBox = fieldButtons.getVbox();
         for (int i = 0; i < vBox.getChildren().size(); i++) {
