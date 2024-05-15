@@ -19,40 +19,10 @@ public class GameAction implements EventHandler<ActionEvent> {
     public GameAction(FieldButtons userField, FieldButtons computerFieldButtons) {
         this.userField = userField;
         this.computerFieldButtons = computerFieldButtons;
-        setButtonsHandler();
+        //setButtonsHandler();
     }
 
-
-//    public static void setUserField(FieldButtons userField) {
-//        GameAction.userField = userField;
-//    }
-//
-//    public static void setComputerField(FieldButtons computerField) {
-//        GameAction.computerField = computerField;
-//    }
-//
-//    public static FieldButtons getComputerField() {
-//        return computerField;
-//    }
-//
-//    public static FieldButtons getUserField() {
-//        return userField;
-//    }
-//
-//    private void initialize(boolean isUser) {
-//        if (isUser) {
-//            this.field = computerField.getField();
-//            //this.buttons = computerField.getButtons();
-//            this.hittedShips = computerField.getHitShips();
-//        } else {
-//            this.field = userField.getField();
-//          //  this.buttons = userField.getButtons();
-//            this.hittedShips = userField.getHitShips();
-//        }
-//    }
-
     public boolean userAction(ActionEvent event) {
-        //initialize(true);
         SimpleCell[][] field = computerFieldButtons.getField();
 
         Button button = (Button) event.getSource();
@@ -83,7 +53,6 @@ public class GameAction implements EventHandler<ActionEvent> {
     }
 
     public boolean computerAction() {
-        //initialize(false);
         SimpleCell[][] field = userField.getField();
         Random random = new Random();
         int x, y;
@@ -156,15 +125,13 @@ public class GameAction implements EventHandler<ActionEvent> {
             }
         }
     }
-    private void setButtonsHandler() {
-        VBox vBox = computerFieldButtons.getVbox();
+    public void setButtonsHandler(FieldButtons fieldButtons) {
+        VBox vBox = fieldButtons.getVbox();
         for (int i = 0; i < vBox.getChildren().size(); i++) {
             HBox hBox = (HBox) vBox.getChildren().get(i);
-            //System.out.println(hBox.getClass());
             for (int j = 0; j < hBox.getChildren().size(); j++) {
                 Button button = (Button) hBox.getChildren().get(j);
                 button.setOnAction(this);
-                //System.out.print(button.getProperties().get("x")+ "/" + button.getProperties().get("y") + " ");
             }
             System.out.println();
         }
@@ -173,9 +140,9 @@ public class GameAction implements EventHandler<ActionEvent> {
     private boolean isEnd(ArrayList<SimpleCell> hit) {
         return hit.size() == 20;
     }
+
     private Button getButtonFromField(FieldButtons fieldButtons, int x, int y) {
         HBox hBox = (HBox) fieldButtons.getVbox().getChildren().get(x);
         return (Button) hBox.getChildren().get(y);
     }
-
 }

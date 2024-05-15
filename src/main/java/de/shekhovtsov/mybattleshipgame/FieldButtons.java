@@ -4,14 +4,11 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-
 public class FieldButtons {
 
-    private SimpleCell[][] field;
-    private VBox vbox;
-   // private ArrayList<SimpleCell> hitShips = new ArrayList<>();
-    private boolean isUser;
+    private final SimpleCell[][] field;
+    private final VBox vbox;
+    private final boolean isUser;
 
     public FieldButtons(VBox vbox, Field field, boolean isUser) {
         this.vbox = vbox;
@@ -38,7 +35,6 @@ public class FieldButtons {
                 button.setMinWidth(30);
                 button.getProperties().put("x", i);
                 button.getProperties().put("y", j);
-                //button.setOnAction(new GameAction());
                 hBox.getChildren().add(button);
                 if (isUser) {
                     button.setDisable(true);
@@ -46,25 +42,6 @@ public class FieldButtons {
                         button.setStyle("-fx-background-color: #8480FE");
                     }
                 }
-//                button.setOnAction(new EventHandler<ActionEvent>() {
-//                    @Override
-//                    public void handle(ActionEvent event) {
-//                        GameAction action = new GameAction();
-//                        if (action.userAction(event)) {
-//                            if(isEnd(getHittedShips())) {
-//                                blockAllButtons();
-//                                topLabel.setText("You WIN!!!!!!!!!!!");
-//                            }
-//                            return;
-//                        }
-//                        while (action.computerAction()) {
-//                            if (isEnd(GameAction.getUserField().getHittedShips())) {
-//                                blockAllButtons();
-//                                topLabel.setText("You are LOOSER!!! HA-HA");
-//                            }
-//                        };
-//                    }
-//                });
             }
             vbox.getChildren().add(hBox);
         }
@@ -83,12 +60,5 @@ public class FieldButtons {
     private boolean isShip(int x, int y) {
         return field[x][y].getId() > 0;
     }
-//
-//    private boolean isEnd(ArrayList<SimpleCell> hit) {
-//        return hit.size() == 20;
-//    }
 
-//    public ArrayList<SimpleCell> getHitShips() {
-//        return hitShips;
-//    }
 }

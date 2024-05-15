@@ -25,12 +25,11 @@ public class GameController {
         randomButton.setDisable(true);
         startButton.setDisable(true);
         GameAction gameAction = new GameAction(userFieldButtons, computerFieldButtons);
+        gameAction.setButtonsHandler(computerFieldButtons);
     }
     @FXML
     public void random() {
         userFieldButtons = new FieldButtons(userBox, new Field(), true);
-       // GameAction.setUserField(userFieldButtons);
-       // GameAction.setComputerField(computerFieldButtons);
     }
     @FXML
     private void initialize() {
