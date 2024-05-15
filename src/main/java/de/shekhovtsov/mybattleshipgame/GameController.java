@@ -1,6 +1,5 @@
 package de.shekhovtsov.mybattleshipgame;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,21 +17,24 @@ public class GameController {
     @FXML
     public VBox userBox;
 
+    private FieldButtons userFieldButtons;
+    private FieldButtons computerFieldButtons;
+
     @FXML
-    public void start(ActionEvent actionEvent) {
+    public void start() {
         randomButton.setDisable(true);
         startButton.setDisable(true);
+        GameAction gameAction = new GameAction(userFieldButtons, computerFieldButtons);
+        gameAction.setButtonsHandler(computerFieldButtons);
     }
     @FXML
-    public void random(ActionEvent actionEvent) {
-        Field userField = new Field();
-        userField.fillFieldRandomly();
-        Field computerField = new Field();
-        computerField.fillFieldRandomly();
+    public void random() {
+        userFieldButtons = new FieldButtons(userBox, new Field(), true);
+    }
+    @FXML
+    private void initialize() {
+        userFieldButtons = new FieldButtons(userBox, new Field(), true);
+        computerFieldButtons = new FieldButtons(computerBox, new Field(), false);
 
-        FieldButtons userFieldButtons = new FieldButtons(userBox, userField.getShips(), true, topLabel);
-        FieldButtons computerFieldButtons = new FieldButtons(computerBox, computerField.getShips(), false, topLabel);
-        GameAction.setUserField(userFieldButtons);
-        GameAction.setComputerField(computerFieldButtons);
     }
 }

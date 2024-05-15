@@ -9,7 +9,7 @@ public class Ship {
 
     public Ship(Field field) {
         FIELD_SIZE = field.getFIELD_SIZE();
-        this.field = field.getShips();
+        this.field = field.getField();
     }
 
     public ArrayList<SimpleCell> createShip(int length, int id) {

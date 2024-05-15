@@ -1,49 +1,30 @@
 package de.shekhovtsov.mybattleshipgame;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GameAction {
-    private SimpleCell[][] field;
-    private Button[][] buttons;
-    private ArrayList<SimpleCell> hittedShips;
-    private static ArrayList<SimpleCell> computerHits = new ArrayList<>();
-    private static FieldButtons computerField;
-    private static FieldButtons userField;
-    private  static int counter = 0;
+public class GameAction implements EventHandler<ActionEvent> {
 
-    public static void setUserField(FieldButtons userField) {
-        GameAction.userField = userField;
-    }
+    private final ArrayList<SimpleCell> hitUserShips = new ArrayList<>();
+    private final ArrayList<SimpleCell> hitCompShips = new ArrayList<>();
+    private final ArrayList<SimpleCell> computerHits = new ArrayList<>();
+    private final FieldButtons computerFieldButtons;
+    private final FieldButtons userField;
 
-    public static void setComputerField(FieldButtons computerField) {
-        GameAction.computerField = computerField;
-    }
-
-    public static FieldButtons getComputerField() {
-        return computerField;
-    }
-
-    public static FieldButtons getUserField() {
-        return userField;
-    }
-
-    private void initialize(boolean isUser) {
-        if (isUser) {
-            this.field = computerField.getShips();
-            this.buttons = computerField.getButtons();
-            this.hittedShips = computerField.getHittedShips();
-        } else {
-            this.field = userField.getShips();
-            this.buttons = userField.getButtons();
-            this.hittedShips = userField.getHittedShips();
-        }
+    public GameAction(FieldButtons userField, FieldButtons computerFieldButtons) {
+        this.userField = userField;
+        this.computerFieldButtons = computerFieldButtons;
+        //setButtonsHandler();
     }
 
     public boolean userAction(ActionEvent event) {
-        initialize(true);
+        SimpleCell[][] field = computerFieldButtons.getField();
 
         Button button = (Button) event.getSource();
         int x = (int) button.getProperties().get("x");
@@ -54,16 +35,17 @@ public class GameAction {
             button.setStyle("-fx-background-color: #81D8D0");
         }
         if (field[x][y].getId() > 0) {
-
             button.setStyle("-fx-background-color: #826D8C");
 
-            hittedShips.add(field[x][y]);
-            ArrayList<SimpleCell> hittedShip = isDead(field[x][y]);
-            if (hittedShip != null) {
-                ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hittedShip, field);
+            hitUserShips.add(field[x][y]);
+            ArrayList<SimpleCell> hitShip = isDead(field[x][y], hitUserShips);
+            if (hitShip != null) {
+                ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 for (SimpleCell simpleCell : waterAroundDeadShip) {
-                    buttons[simpleCell.getX()][simpleCell.getY()].setStyle("-fx-background-color: #81D8D0");
-                    buttons[simpleCell.getX()][simpleCell.getY()].setDisable(true);
+                    HBox hBox = (HBox) computerFieldButtons.getVbox().getChildren().get(simpleCell.getX());
+                    Button fieldButton = (Button) hBox.getChildren().get(simpleCell.getY());
+                    fieldButton.setStyle("-fx-background-color: #81D8D0");
+                    fieldButton.setDisable(true);
                 }
             }
             return true;
@@ -72,7 +54,7 @@ public class GameAction {
     }
 
     public boolean computerAction() {
-        initialize(false);
+        SimpleCell[][] field = userField.getField();
         Random random = new Random();
         int x, y;
         while (true) {
@@ -85,18 +67,19 @@ public class GameAction {
             }
         }
         if (field[x][y].getId() == 0) {
-            buttons[x][y].setStyle("-fx-background-color: #81D8D0");
+            getButtonFromField(userField, x, y).setStyle("-fx-background-color: #81D8D0");
         }
         if (field[x][y].getId() > 0) {
-            buttons[x][y].setStyle("-fx-background-color: #826D8C");
-            hittedShips.add(field[x][y]);
-            ArrayList<SimpleCell> hittedShip = isDead(field[x][y]);
-            if (hittedShip != null) {
-                ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hittedShip, field);
+            getButtonFromField(userField, x, y).setStyle("-fx-background-color: #826D8C");
+            hitCompShips.add(field[x][y]);
+            ArrayList<SimpleCell> hitShip = isDead(field[x][y], hitCompShips);
+            if (hitShip != null) {
+                ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 computerHits.addAll(waterAroundDeadShip);
                 for (SimpleCell simpleCell : waterAroundDeadShip) {
-                    buttons[simpleCell.getX()][simpleCell.getY()].setStyle("-fx-background-color: #81D8D0");
-                    buttons[simpleCell.getX()][simpleCell.getY()].setDisable(true);
+                    Button button = getButtonFromField(userField, simpleCell.getX(), simpleCell.getY());
+                    button.setStyle("-fx-background-color: #81D8D0");
+                    button.setDisable(true);
                 }
             }
             return true;
@@ -104,26 +87,65 @@ public class GameAction {
         return false;
     }
 
-    private ArrayList<SimpleCell> isDead(SimpleCell current) {
-        ArrayList<SimpleCell> hittedShip = new ArrayList<>();
-        int length = current.getId() / 10;
-        for (SimpleCell simpleCell : hittedShips) {
-            if (simpleCell.getId() == current.getId()) {
-                hittedShip.add(simpleCell);
+    @Override
+    public void handle(ActionEvent event) {
+        if (userAction(event)) {
+            if (isEnd(hitUserShips)) {
+                computerFieldButtons.blockAllButtons();
+               // topLabel.setText("You WIN!!!!!!!!!!!");
+            }
+            return;
+        }
+        while (computerAction()) {
+            if (isEnd(hitCompShips)) {
+                computerFieldButtons.blockAllButtons();
+                break;
+               // topLabel.setText("You are LOOSER!!! HA-HA");
             }
         }
-        if (hittedShip.size() == length) {
-            return hittedShip;
+    }
+
+    private ArrayList<SimpleCell> isDead(SimpleCell current, ArrayList<SimpleCell> hitShips) {
+        ArrayList<SimpleCell> hitShip = new ArrayList<>();
+        int length = current.getId() / 10;
+        for (SimpleCell simpleCell : hitShips) {
+            if (simpleCell.getId() == current.getId()) {
+                hitShip.add(simpleCell);
+            }
+        }
+        if (hitShip.size() == length) {
+            return hitShip;
         }
         return null;
     }
 
     private boolean isExist(int x, int y) {
-        for (int i = 0; i < computerHits.size(); i++) {
-            if (computerHits.get(i).getX() == x && computerHits.get(i).getY() == y) {
+        for (SimpleCell computerHit : computerHits) {
+            if (computerHit.getX() == x && computerHit.getY() == y) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void setButtonsHandler(FieldButtons fieldButtons) {
+        VBox vBox = fieldButtons.getVbox();
+        for (int i = 0; i < vBox.getChildren().size(); i++) {
+            HBox hBox = (HBox) vBox.getChildren().get(i);
+            for (int j = 0; j < hBox.getChildren().size(); j++) {
+                Button button = (Button) hBox.getChildren().get(j);
+                button.setOnAction(this);
+            }
+            System.out.println();
+        }
+    }
+
+    private boolean isEnd(ArrayList<SimpleCell> hit) {
+        return hit.size() == 20;
+    }
+
+    private Button getButtonFromField(FieldButtons fieldButtons, int x, int y) {
+        HBox hBox = (HBox) fieldButtons.getVbox().getChildren().get(x);
+        return (Button) hBox.getChildren().get(y);
     }
 }
