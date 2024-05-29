@@ -58,7 +58,7 @@ public class FieldButtons {
     }
 
     private boolean isShip(int x, int y) {
-        return field[x][y].getId() > 0;
+        return field[x][y].id() > 0;
     }
 
 }

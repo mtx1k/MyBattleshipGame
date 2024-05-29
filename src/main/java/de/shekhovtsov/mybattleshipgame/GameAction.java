@@ -31,10 +31,10 @@ public class GameAction implements EventHandler<ActionEvent> {
         int y = (int) button.getProperties().get("y");
         button.setDisable(true);
 
-        if (field[x][y].getId() == 0) {
+        if (field[x][y].id() == 0) {
             button.setStyle("-fx-background-color: #81D8D0");
         }
-        if (field[x][y].getId() > 0) {
+        if (field[x][y].id() > 0) {
             button.setStyle("-fx-background-color: #826D8C");
 
             hitUserShips.add(field[x][y]);
@@ -42,8 +42,8 @@ public class GameAction implements EventHandler<ActionEvent> {
             if (hitShip != null) {
                 ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 for (SimpleCell simpleCell : waterAroundDeadShip) {
-                    HBox hBox = (HBox) computerFieldButtons.getVbox().getChildren().get(simpleCell.getX());
-                    Button fieldButton = (Button) hBox.getChildren().get(simpleCell.getY());
+                    HBox hBox = (HBox) computerFieldButtons.getVbox().getChildren().get(simpleCell.x());
+                    Button fieldButton = (Button) hBox.getChildren().get(simpleCell.y());
                     fieldButton.setStyle("-fx-background-color: #81D8D0");
                     fieldButton.setDisable(true);
                 }
@@ -62,14 +62,14 @@ public class GameAction implements EventHandler<ActionEvent> {
             y = random.nextInt(0, 10);
 
             if (!isExist(x, y)) {
-                computerHits.add(new SimpleCell(x, y));
+                computerHits.add(new SimpleCell(field[x][y].id(), x, y));
                 break;
             }
         }
-        if (field[x][y].getId() == 0) {
+        if (field[x][y].id() == 0) {
             getButtonFromField(userField, x, y).setStyle("-fx-background-color: #81D8D0");
         }
-        if (field[x][y].getId() > 0) {
+        if (field[x][y].id() > 0) {
             getButtonFromField(userField, x, y).setStyle("-fx-background-color: #826D8C");
             hitCompShips.add(field[x][y]);
             ArrayList<SimpleCell> hitShip = isDead(field[x][y], hitCompShips);
@@ -77,7 +77,7 @@ public class GameAction implements EventHandler<ActionEvent> {
                 ArrayList<SimpleCell> waterAroundDeadShip = Field.getCoordinatesAroundShip(hitShip, field);
                 computerHits.addAll(waterAroundDeadShip);
                 for (SimpleCell simpleCell : waterAroundDeadShip) {
-                    Button button = getButtonFromField(userField, simpleCell.getX(), simpleCell.getY());
+                    Button button = getButtonFromField(userField, simpleCell.x(), simpleCell.y());
                     button.setStyle("-fx-background-color: #81D8D0");
                     button.setDisable(true);
                 }
@@ -107,9 +107,9 @@ public class GameAction implements EventHandler<ActionEvent> {
 
     private ArrayList<SimpleCell> isDead(SimpleCell current, ArrayList<SimpleCell> hitShips) {
         ArrayList<SimpleCell> hitShip = new ArrayList<>();
-        int length = current.getId() / 10;
+        int length = current.id() / 10;
         for (SimpleCell simpleCell : hitShips) {
-            if (simpleCell.getId() == current.getId()) {
+            if (simpleCell.id() == current.id()) {
                 hitShip.add(simpleCell);
             }
         }
@@ -121,7 +121,7 @@ public class GameAction implements EventHandler<ActionEvent> {
 
     private boolean isExist(int x, int y) {
         for (SimpleCell computerHit : computerHits) {
-            if (computerHit.getX() == x && computerHit.getY() == y) {
+            if (computerHit.x() == x && computerHit.y() == y) {
                 return true;
             }
         }

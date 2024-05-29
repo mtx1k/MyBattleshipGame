@@ -40,7 +40,7 @@ public class Ship {
                 if (i < 0 || i >= FIELD_SIZE) {
                     continue;
                 }
-                if (field[x][i].getId() == 9) {
+                if (field[x][i].id() == 9) {
                     possibleCoordinates.add(new SimpleCell(newID, x, i));
                 }
             }
@@ -53,7 +53,7 @@ public class Ship {
                 if (i < 0 || i >= FIELD_SIZE) {
                     continue;
                 }
-                if (field[i][y].getId() == 9) {
+                if (field[i][y].id() == 9) {
                     possibleCoordinates.add(new SimpleCell(newID, i, y));
                 }
             }
